@@ -101,7 +101,9 @@ const BetList = () => {
     const newdata = { ...callbackresponse, data: reconstructedList };
     setDataTabble(newdata);
   }, [callbackresponse]);
-
+  useEffect(() => {
+    console.log('c');
+  }, []);
   return (
     <div className='betlistcontainer'>
       <div>

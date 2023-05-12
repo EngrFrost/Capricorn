@@ -13,7 +13,6 @@ const usePagination = (
 
   const [callbackresponse, setCallbackResponse] = useState('check');
   const [isloading, setIsloading] = useState(false);
-  const [singleload, setSingleLoad] = useState(false);
   const [dateSearch, setDateSearch] = useState(currentDate);
 
   const onPrevious = () => {
@@ -44,7 +43,7 @@ const usePagination = (
 
   const onNext = () => {
     const urlpage = dataTablelink?.links?.next;
-   
+
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
     const page = searchParams.get('page');
@@ -84,20 +83,16 @@ const usePagination = (
   const onChangeDate = (date, dateString) => {
     setDateSearch(dateString);
     setIsloading(true);
+    console.log('cehcfk');
     const newparams = `${params}?page=1&createdAt=${dateString}`;
     actioncall(newparams, callbackPagination);
   };
 
   useEffect(() => {
-    if (!singleload) {
-      console.log('check');
-      const newparams = `${params}?page=1${otherparams ?? ''}${
-        dateparams ?? ''
-      }`;
-      setIsloading(true);
-      setSingleLoad(true);
-      actioncall(newparams, callbackPagination);
-    }
+    const newparams = `${params}?page=1${otherparams ?? ''}${dateparams ?? ''}`;
+    setIsloading(true);
+
+    actioncall(newparams, callbackPagination);
   }, []);
 
   return {

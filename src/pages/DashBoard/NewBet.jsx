@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react';
 import { Form, Button, Input, Select } from 'antd';
 import { MdArrowBackIos } from 'react-icons/md';
@@ -27,11 +28,11 @@ const NewBets = () => {
   const [betTypeOptions, setBetTypeOptions] = useState([]);
   const [winAmount, setWinAmount] = useState();
   const [remainingBetAmount, setRemainingBetAmount] = useState();
+  const [isBetLimit, setIsBetLimit] = useState(false);
   //------------
   const [betAmount, setBetAmount] = useState(0);
-  const [isBetLimit, setIsBetLimit] = useState(false);
   const [betNumber, setBetNumber] = useState();
-  // const [betType, setBetType] = useState();
+  const [formData, setFormData] = useState();
   //-------------
   const [betnumberRestrictionInput, setBetnumberRestrictionInput] = useState();
   const [limitbet, setLimitBet] = useState([]);
@@ -63,11 +64,6 @@ const NewBets = () => {
     [],
   );
   const submitHandler = (value) => {
-    // console.log(value);
-    // console.log(winAmount.bet_type);
-    // console.log(betTypeOptions);
-    // console.log(winAmount);
-    // console.log(betTypeOptions[1].bet_type);
     let new_bet_number;
     new_bet_number = value.bet_num.toString();
     if (
@@ -318,6 +314,7 @@ const NewBets = () => {
   useEffect(() => {
     checklimit(betNumber);
   }, [betNumber, winAmount]);
+
   return (
     <GlassLayout>
       <div
