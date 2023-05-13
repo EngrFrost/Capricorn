@@ -26,13 +26,19 @@ const NewBets = () => {
 
   const [dataTable, setDataTabble] = useState([]);
   const [betTypeOptions, setBetTypeOptions] = useState([]);
-  const [winAmount, setWinAmount] = useState();
+  // const [winAmount, setWinAmount] = useState();
   const [remainingBetAmount, setRemainingBetAmount] = useState();
   const [isBetLimit, setIsBetLimit] = useState(false);
   //------------
-  const [betAmount, setBetAmount] = useState(0);
-  const [betNumber, setBetNumber] = useState();
-  const [formData, setFormData] = useState();
+  // const [betAmount, setBetAmount] = useState(0);
+  // const [betNumber, setBetNumber] = useState();
+  const [formData, setFormData] = useState({
+    bet_number: '',
+    bet_type: '',
+    bet_amount: '',
+    win_amt: '',
+    amt_const: '',
+  });
   //-------------
   const [betnumberRestrictionInput, setBetnumberRestrictionInput] = useState();
   const [limitbet, setLimitBet] = useState([]);
@@ -63,58 +69,55 @@ const NewBets = () => {
     ],
     [],
   );
-  const submitHandler = (value) => {
+  const submitHandler = () => {
     let new_bet_number;
-    new_bet_number = value.bet_num.toString();
+    new_bet_number = formData.bet_number.toString();
     if (
-      value.bet_num < 10 &&
-      winAmount.bet_type === betTypeOptions[0].bet_type
+      formData.bet_number < 10 &&
+      formData.bet_type === betTypeOptions[0].bet_type
     ) {
-      new_bet_number = '0' + value.bet_num.toString();
+      new_bet_number = '0' + formData.bet_number.toString();
     }
     if (
-      value.bet_num < 10 &&
-      winAmount.bet_type === betTypeOptions[1].bet_type
+      formData.bet_number < 10 &&
+      formData.bet_type === betTypeOptions[1].bet_type
     ) {
-      console.log('check');
-      new_bet_number = '00' + value.bet_num.toString();
+      new_bet_number = '00' + formData.bet_number.toString();
     }
     if (
-      value.bet_num >= 10 &&
-      value.bet_num < 100 &&
-      winAmount.bet_type === betTypeOptions[1].bet_type
+      formData.bet_number >= 10 &&
+      formData.bet_number < 100 &&
+      formData.bet_type === betTypeOptions[1].bet_type
     ) {
-      new_bet_number = '0' + value.bet_num.toString();
+      new_bet_number = '0' + formData.bet_number.toString();
     }
     if (
-      value.bet_num < 10 &&
-      winAmount.bet_type === betTypeOptions[3].bet_type
+      formData.bet_number < 10 &&
+      formData.bet_type === betTypeOptions[3].bet_type
     ) {
-      new_bet_number = '000' + value.bet_num.toString();
+      new_bet_number = '000' + formData.bet_number.toString();
     }
     if (
-      value.bet_num >= 10 &&
-      value.bet_num < 100 &&
-      winAmount.bet_type === betTypeOptions[3].bet_type
+      formData.bet_number >= 10 &&
+      formData.bet_number < 100 &&
+      formData.bet_type === betTypeOptions[3].bet_type
     ) {
-      new_bet_number = '00' + value.bet_num.toString();
+      new_bet_number = '00' + formData.bet_number.toString();
     }
     if (
-      value.bet_num >= 100 &&
-      value.bet_num < 1000 &&
-      winAmount.bet_type === betTypeOptions[4].bet_type
+      formData.bet_number >= 100 &&
+      formData.bet_number < 1000 &&
+      formData.bet_type === betTypeOptions[4].bet_type
     ) {
-      new_bet_number = '0' + value.bet_num.toString();
+      new_bet_number = '0' + formData.bet_number.toString();
     }
 
-    // console.log(new_bet_number);
-    console.log(winAmount);
     const newdata = {
       id: Math.floor(Math.random() * 1000000),
-      bet_amt: +value.bet_amt,
+      bet_amt: +formData.bet_amount,
       bet_num: new_bet_number,
-      bet_type: winAmount.bet_type,
-      win_amt: winAmount.win_amt * value.bet_amt,
+      bet_type: formData.bet_type,
+      win_amt: formData.win_amt * formData.bet_amount,
     };
     console.log(newdata);
     if (dataTable) {
@@ -127,7 +130,7 @@ const NewBets = () => {
           test[x].bet_amt =
             parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt);
           test[x].win_amt =
-            parseInt(test[x].bet_amt) * parseInt(winAmount.win_amt);
+            parseInt(test[x].bet_amt) * parseInt(formData.win_amt);
           setDataTabble([...test]);
           return 0;
         }
@@ -135,6 +138,12 @@ const NewBets = () => {
     }
 
     setDataTabble([...dataTable, newdata]);
+  };
+
+  const handleChange = (key) => (e) => {
+    console.log(e);
+    setFormData({ ...formData, [key]: e.target.value });
+    return;
   };
 
   const deleteHandler = (id) => {
@@ -159,11 +168,10 @@ const NewBets = () => {
   }, [dataTable]);
 
   const onTypeChange = (value) => {
-    console.log(betTypeOptions);
     switch (value) {
       case betTypeOptions[0].bet_type:
         setBetnumberRestrictionInput(2);
-        setWinAmount((prev) => {
+        setFormData((prev) => {
           return {
             ...prev,
             bet_type: value,
@@ -174,7 +182,7 @@ const NewBets = () => {
         break;
       case betTypeOptions[1].bet_type:
         setBetnumberRestrictionInput(3);
-        setWinAmount((prev) => {
+        setFormData((prev) => {
           return {
             ...prev,
             bet_type: value,
@@ -185,7 +193,7 @@ const NewBets = () => {
         break;
       case betTypeOptions[2].bet_type:
         setBetnumberRestrictionInput(4);
-        setWinAmount((prev) => {
+        setFormData((prev) => {
           return {
             ...prev,
             bet_type: value,
@@ -228,92 +236,87 @@ const NewBets = () => {
     if (status === 400) {
       console.log('check');
       if (dataTable) {
-        let test = dataTable;
-
-        for (let value in limitbet) {
-          let bet = value.split(':');
-
-          for (let x = 0; x <= test.length - 1; x++) {
+        
+        const newdata = dataTable.filter((bet) => {
+          for (let value in limitbet) {
+            let betArr = value.split(':');
             if (
-              test[x].bet_amt > limitbet[value].remaining_const &&
-              test[x].bet_type === bet[0] &&
-              test[x].bet_num === bet[1]
+              bet.bet_amt > limitbet[value].remaining_const &&
+              bet.bet_type === betArr[0] &&
+              bet.bet_num === betArr[1]
             ) {
-              test.splice(x, 1);
-
-              setDataTabble([...test]);
+              const title = `Bet Type: ${betArr[0]}`;
+              const message = `Bet Number: ${betArr[1]} exceeded the remaining limit  `;
+              openNotification(title, message);
+              return false;
             }
           }
-        }
+          return true;
+        });
+
+        setDataTabble([...newdata]);
       }
     }
   };
 
-  const checklimit = (limitcheck) => {
-    console.log(limitcheck);
-    // console.log(limitbet);
-    // console.log(winAmount);
-    // console.log(betNumber);
-    const newdata = `${winAmount?.bet_type}:${betNumber}`;
-    console.log(newdata);
-    console.log(limitbet);
-    setIsBetLimit(limitbet[newdata]?.remaining_const < limitcheck);
-    if (limitbet[newdata]?.remaining_const < limitcheck) {
-      console.log(limitbet[newdata]?.remaining_const);
-      setRemainingBetAmount(limitbet[newdata]?.remaining_const.toString());
-    } else {
-      setRemainingBetAmount('');
-    }
-    // socket.emit('watchlist:get', limitcheck);
+  const checklimit = () => {
+    // L2:35 betType:betNumber
+    const { bet_type, bet_number, bet_amount } = formData;
+    const betTypeAndNumber = `${bet_type}:${bet_number}`;
+    const remainingBetAmount = limitbet[betTypeAndNumber]?.remaining_const;
+    const betAmount = bet_amount || 1;
+
+    console.log(formData.bet_amount ? formData.bet_amount : 1);
+    setIsBetLimit(remainingBetAmount <= betAmount);
+
+    setRemainingBetAmount(
+      remainingBetAmount <= betAmount ? remainingBetAmount.toString() : '',
+    );
   };
+
+  useEffect(() => {
+    console.log(formData);
+    checklimit();
+  }, [formData]);
 
   useEffect(() => {
     getBetType(callback);
     socket.connect();
     socket.emit('watchlist:get', '');
+
+    const updateLimitBet = (data) => {
+      setLimitBet(data);
+    };
+
+    socket.on('watchlist:update', updateLimitBet);
+
+    return () => {
+      socket.off('watchlist:update', updateLimitBet);
+    };
   }, []);
 
   useEffect(() => {
-    // console.log(limitbet);
-    socket.connect();
-    socket.on('watchlist:update', (data) => {
-      // console.log('🚀 ~ file: NewBet.jsx:253 ~ socket.on ~ data:', data);
-      setLimitBet(data);
+    if (!dataTable) {
+      return;
+    }
+
+    const updatedDataTable = dataTable.filter((data) => {
+      const limitKey = `${data.bet_type}:${data.bet_num}`;
+      const limit = limitbet[limitKey];
+
+      if (!limit || data.bet_amt <= limit.remaining_const) {
+        return true;
+      }
+
+      const title = `Bet Type: ${data.bet_type}`;
+      const message = `Bet Number: ${data.bet_num} exceeded the remaining limit`;
+      openNotification(title, message);
+
+      return false;
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    setDataTabble(updatedDataTable);
   }, [limitbet]);
-
-  useEffect(() => {
-    if (dataTable) {
-      let test = dataTable;
-
-      for (let value in limitbet) {
-        let bet = value.split(':');
-
-        for (let x = 0; x <= test.length - 1; x++) {
-          if (
-            test[x].bet_amt > limitbet[value].remaining_const &&
-            test[x].bet_type === bet[0] &&
-            test[x].bet_num === bet[1]
-          ) {
-            const title = `Bet Type: ${bet[0]}`;
-            const message = `Bet Number: ${bet[1]} exceeded the remaining limit  `;
-            openNotification(title, message);
-            test.splice(x, 1);
-
-            setDataTabble([...test]);
-          }
-        }
-      }
-    }
-  }, [limitbet]);
-
-  useEffect(() => {
-    checklimit(betNumber);
-  }, [betNumber, winAmount]);
 
   return (
     <GlassLayout>
@@ -337,7 +340,6 @@ const NewBets = () => {
             layout='vertical'
           >
             <Form.Item
-              value={betNumber}
               className='form-group-custom'
               label='Bet Number'
               name='bet_num'
@@ -353,10 +355,8 @@ const NewBets = () => {
               ]}
             >
               <Input
-                value={betNumber}
-                onChange={(e) => {
-                  setBetNumber(e.target.value);
-                }}
+                value={formData.bet_number}
+                onChange={handleChange('bet_number')}
               />
             </Form.Item>
 
@@ -386,7 +386,7 @@ const NewBets = () => {
               label={`Bet Amount (remaining: ${
                 remainingBetAmount
                   ? remainingBetAmount
-                  : winAmount?.amt_const ?? 0
+                  : formData?.amt_const ?? 0
               })`}
               name='bet_amt'
               rules={[
@@ -400,13 +400,12 @@ const NewBets = () => {
               ]}
             >
               <Input
-                value={betAmount}
-                disabled={winAmount && betNumber ? false : true}
+                value={formData.bet_amount}
+                disabled={
+                  formData.bet_type && formData.bet_number ? false : true
+                }
                 type='number'
-                onChange={(e) => {
-                  setBetAmount(e.target.value);
-                  checklimit(e.target.value);
-                }}
+                onChange={handleChange('bet_amount')}
               />
             </Form.Item>
 
@@ -414,7 +413,7 @@ const NewBets = () => {
               className='w-100'
               type='primary'
               htmlType='submit'
-              disabled={isBetLimit}
+              // disabled={isBetLimit}
             >
               SUBMIT
             </Button>
